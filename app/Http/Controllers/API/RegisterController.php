@@ -17,6 +17,7 @@ class RegisterController extends BaseController
      */
     public function register(Request $request)
     {
+        // dd($request);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -32,7 +33,7 @@ class RegisterController extends BaseController
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
-        $success['name'] =  $user->name;
+        $success['user'] =  $user;
 
         return $this->sendResponse($success, 'User register successfully.');
     }
@@ -44,11 +45,11 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        // return 'hello';
+        // error_log('hello');
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
-            $success['name'] =  $user->name;
+            $success['user'] =  $user;
 
             return $this->sendResponse($success, 'User login successfully.');
         } else {
